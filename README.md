@@ -35,6 +35,31 @@ Set `PARTIFUL_CALENDAR_URL` on the worker. `timeMin` defaults to now, `timeMax` 
 
 The toggles under **Manage Synced Calendar** control which Partiful event categories are included in that feed, such as waitlist events, pending approval events, and invited events. Preferences are saved automatically by Partiful.
 
+## Using With A Notion Custom Agent
+
+1. Deploy the worker and set `PARTIFUL_CALENDAR_URL` on the worker environment.
+2. Open the Notion custom agent's configuration.
+3. In **Tools and access**, add a connection to `partiful-calendar-worker`.
+4. Enable both tools:
+	- **List Partiful Events** for the normal "what is coming up?" call.
+	- **Query Partiful Events** when the agent needs a specific date range, limit, or search term.
+5. Set the tools to **Run automatically** if you want the agent to sync without asking every time. Both tools are read-only; they fetch the Partiful feed and return event data.
+
+The custom agent should not ask the user for the Partiful calendar URL during normal use. The URL belongs in `PARTIFUL_CALENDAR_URL`, and `listPartifulEvents` can run with `{}`.
+
+Suggested custom-agent instruction:
+
+```text
+Use the partiful-calendar-worker tools to read Partiful events.
+
+For a normal sync, call List Partiful Events with empty input.
+For a specific window or search, call Query Partiful Events. Pass null for filters that should use defaults.
+
+Do not ask the user for their Partiful calendar URL unless the worker reports that PARTIFUL_CALENDAR_URL is missing.
+
+When mirroring events into Notion or another calendar, treat the event id or Partiful url as the stable identity. Store the title, start, end, location, url, and description when available. If the default upcoming query returns no events, that can simply mean there are no upcoming events in the default window.
+```
+
 Output:
 
 ```json
