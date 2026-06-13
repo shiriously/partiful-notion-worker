@@ -26,6 +26,15 @@ queryPartifulEvents
 
 Set `PARTIFUL_CALENDAR_URL` on the worker. `timeMin` defaults to now, `timeMax` defaults to 180 days after `timeMin`, and `maxEvents` defaults to 50.
 
+## Getting Your Partiful Calendar URL
+
+1. Open Partiful and go to your profile settings.
+2. Select **Calendar Sync** in the settings sidebar.
+3. In the **Calendar Sync** section, choose **Use Gcal** and click **Copy Link**.
+4. Use the copied `webcal://calendars.partiful.com/getCalendar?id=...` link as `PARTIFUL_CALENDAR_URL`.
+
+The toggles under **Manage Synced Calendar** control which Partiful event categories are included in that feed, such as waitlist events, pending approval events, and invited events. Preferences are saved automatically by Partiful.
+
 Output:
 
 ```json
