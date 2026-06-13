@@ -9,7 +9,17 @@ worker.tool("listPartifulEvents", {
 	title: "List Partiful Events",
 	description:
 		"Fetch upcoming events from the Partiful calendar configured in PARTIFUL_CALENDAR_URL. Use this when no custom filter is needed.",
-	schema: j.object({}),
+	schema: j.anyOf(
+		j.object({}),
+		j.object({
+			calendarUrl: j
+				.string()
+				.describe(
+					"A Partiful calendar URL. Pass null to use PARTIFUL_CALENDAR_URL from the worker environment.",
+				)
+				.nullable(),
+		}),
+	),
 	outputSchema: j.object({
 		calendarUrl: j.string(),
 		events: j.array(
@@ -28,7 +38,7 @@ worker.tool("listPartifulEvents", {
 		),
 	}),
 	hints: { readOnlyHint: true },
-	execute: async () => listPartifulEvents({}),
+	execute: async (input) => listPartifulEvents(input),
 });
 
 worker.tool("queryPartifulEvents", {
