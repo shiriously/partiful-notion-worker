@@ -1,20 +1,22 @@
 # Partiful Notion Worker
 
-This worker exposes a custom-agent tool named `listPartifulEvents`. It accepts a user-provided Partiful calendar URL, fetches the ICS feed, and returns event objects with Partiful links ready for the agent to sync into a Notion database, Google Calendar, or another destination.
+This worker exposes custom-agent tools that fetch a Partiful calendar ICS feed and return event objects with Partiful links ready for the agent to sync into a Notion database, Google Calendar, or another destination.
 
 ## Tool
 
-Capability key:
+Capability keys:
 
 ```bash
 listPartifulEvents
+queryPartifulEvents
 ```
 
-Input:
+`listPartifulEvents` takes no input and reads the calendar URL from `PARTIFUL_CALENDAR_URL`.
+
+`queryPartifulEvents` accepts explicit filters:
 
 ```json
 {
-	"calendarUrl": null,
 	"timeMin": "2026-07-01T00:00:00Z",
 	"timeMax": "2026-08-01T00:00:00Z",
 	"maxEvents": 50,
@@ -22,7 +24,7 @@ Input:
 }
 ```
 
-Set `PARTIFUL_CALENDAR_URL` on the worker to let agents pass `calendarUrl: null`. The caller can still provide `calendarUrl` to override the environment default. `timeMin` defaults to now, `timeMax` defaults to 180 days after `timeMin`, and `maxEvents` defaults to 50.
+Set `PARTIFUL_CALENDAR_URL` on the worker. `timeMin` defaults to now, `timeMax` defaults to 180 days after `timeMin`, and `maxEvents` defaults to 50.
 
 Output:
 
@@ -64,13 +66,13 @@ npm test
 Execute locally:
 
 ```bash
-ntn workers exec listPartifulEvents --local -d '{"calendarUrl":"webcal://calendars.partiful.com/getCalendar?id=YOUR_CALENDAR_ID"}'
+PARTIFUL_CALENDAR_URL="webcal://calendars.partiful.com/getCalendar?id=YOUR_CALENDAR_ID" ntn workers exec listPartifulEvents --local -d '{}'
 ```
 
-Or with `PARTIFUL_CALENDAR_URL` configured:
+Or query with explicit filters:
 
 ```bash
-ntn workers exec listPartifulEvents --local -d '{"calendarUrl":null}'
+PARTIFUL_CALENDAR_URL="webcal://calendars.partiful.com/getCalendar?id=YOUR_CALENDAR_ID" ntn workers exec queryPartifulEvents --local -d '{"timeMin":"2026-07-01T00:00:00Z","timeMax":"2026-08-01T00:00:00Z","maxEvents":50,"query":null}'
 ```
 
 Deploy:

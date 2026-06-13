@@ -8,14 +8,34 @@ export default worker;
 worker.tool("listPartifulEvents", {
 	title: "List Partiful Events",
 	description:
-		"Fetch a user-provided Partiful webcal/ICS calendar URL and return matching event details plus Partiful links for a custom agent to sync elsewhere.",
+		"Fetch upcoming events from the Partiful calendar configured in PARTIFUL_CALENDAR_URL. Use this when no custom filter is needed.",
+	schema: j.object({}),
+	outputSchema: j.object({
+		calendarUrl: j.string(),
+		events: j.array(
+			j.object({
+				id: j.string(),
+				title: j.string(),
+				start: j.string(),
+				end: j.string().nullable(),
+				allDay: j.boolean(),
+				timezone: j.string().nullable(),
+				location: j.string().nullable(),
+				description: j.string().nullable(),
+				url: j.string().nullable(),
+				links: j.array(j.string()),
+			}),
+		),
+	}),
+	hints: { readOnlyHint: true },
+	execute: async () => listPartifulEvents({}),
+});
+
+worker.tool("queryPartifulEvents", {
+	title: "Query Partiful Events",
+	description:
+		"Fetch events from the configured Partiful calendar with explicit filters. Pass null for fields that should use defaults.",
 	schema: j.object({
-		calendarUrl: j
-			.string()
-			.describe(
-				"A Partiful calendar URL, usually webcal://calendars.partiful.com/getCalendar?id=.... Pass null to use PARTIFUL_CALENDAR_URL from the worker environment.",
-			)
-			.nullable(),
 		timeMin: j
 			.datetime()
 			.describe(
@@ -56,5 +76,6 @@ worker.tool("listPartifulEvents", {
 			}),
 		),
 	}),
+	hints: { readOnlyHint: true },
 	execute: async (input) => listPartifulEvents(input),
 });
